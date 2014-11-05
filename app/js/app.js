@@ -46,7 +46,12 @@ Client.prototype = {
 	},
 
 	createSummary: function(event, meta) {
-		var params = {text: event.data};
+		var data = event.data;
+		var re = / V\d+:/;
+		if (data.match(re)) {
+                	data = data.split(re)[1];
+		}
+		var params = {text: data};
 		if (window.nowrap && window.nowrap === true) {
         		params.class = "nowrap";
 		}
