@@ -46,7 +46,11 @@ Client.prototype = {
 	},
 
 	createSummary: function(event, meta) {
-		return $('<summary />', {text: event.data});
+		var params = {text: event.data};
+		if (window.nowrap && window.nowrap === true) {
+        		params.class = "nowrap";
+		}
+		return $('<summary />', params);
 	},
 
 	listen: function (emitter) {

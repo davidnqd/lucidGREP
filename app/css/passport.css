@@ -1,0 +1,13 @@
+body {
+    background-color: #F1F1F1 !important;
+}
+
+#results {
+    border: 0 !important;
+}
+
+.nowrap {
+    padding: 0 !important;
+    white-space: nowrap !important;
+}
+
