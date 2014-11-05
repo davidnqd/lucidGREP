@@ -50,6 +50,7 @@ Client.prototype = {
 		var re = / V\d+:/;
 		if (data.match(re)) {
                 	data = data.split(re)[1];
+                	data = data.replace(/ \(log level = \d\)/, '');
 		}
 		var params = {text: data};
 		if (window.nowrap && window.nowrap === true) {
