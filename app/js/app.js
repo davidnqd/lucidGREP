@@ -152,6 +152,25 @@ Client.prototype = {
 		return this;
 	},
 
+	asCustomTab: function(element, filter, callback) {
+		var tab = {element: element, callback: callback};
+		this.tabs.push(tab);
+
+		var field = $('<input />', {name: 'data'}).uniqueId();
+
+		this.callbacks.push(function (node) {
+			var fieldValue = field.val();
+			if (fieldValue)
+				callback(node, filter(node.children('summary').text(), fieldValue));
+		});
+
+		field.change(this.refresh.bind(this));
+
+		element.append( $('<label />', {label: field.attr('id'), text: 'Message'}).add($('<span/>').append(field)) );
+
+		return this;
+	},
+
 	asMore: function (element) {
 		this.moreButton = element.button().hide();
 		return this;

@@ -44,11 +44,23 @@
 		});
 
 		new Client($('#results'))
-			.asTab($('#filter-tab'), function(node, matches) {
+			.asCustomTab($('#filter-tab'), function(nodeText, searchText) {
+				var regexObj = new RegExp(searchText);
+				return regexObj.test(nodeText);
+			}, function(node, matches) {
 				if (!matches) node.hide();
 			})
-			.asTab($('#highlight-tab'), function(node, matches) {
+			.asCustomTab($('#highlight-tab'), function(nodeText, searchText) {
+				var regexObj = new RegExp(searchText);
+				return regexObj.test(nodeText);
+			}, function(node, matches) {
 				if (matches) node.css('background-color', 'yellow');
+			})
+			.asCustomTab($('#exclude-tab'), function(nodeText, searchText) {
+				var regexObj = new RegExp(searchText);
+				return regexObj.test(nodeText);
+			}, function(node, matches) {
+				if (matches) node.hide();
 			})
 			.asPause($('#pause'))
 			.asMore($('#more'))
@@ -66,6 +78,7 @@
   		<li><a href='javascript:void(0)' onclick="toggleWrap()">Wrap</a></li>
   		<li><a href='#filter-tab'>Filter</a></li>
   		<li><a href='#highlight-tab'>Highlight</a></li>
+  		<li><a href='#exclude-tab'>Exclude</a></li>
   		<li id='tab-buttons'>
   			<input type='checkbox' id='pause' />
   			<label for='pause'>&#10074;&#10074; Pause</label>
@@ -76,6 +89,9 @@
   	</div>
   	<div id='highlight-tab'>
   		<p>Highlight events which match <em>all</em> filters.</p>
+  	</div>
+  	<div id='exclude-tab'>
+  		<p>Exclude events which match <em>some</em> filters.</p>
   	</div>
   </div>
 </body>
