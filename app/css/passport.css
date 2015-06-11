@@ -11,3 +11,8 @@ body {
     white-space: nowrap !important;
 }
 
+#tabs {
+    -webkit-user-select: none;
+    user-select: none;
+}
+

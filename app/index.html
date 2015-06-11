@@ -76,12 +76,12 @@
   	<ul>
   		<li><a href='javascript:void(0)' onclick="clearResults()">Clear</a></li>
   		<li><a href='javascript:void(0)' onclick="toggleWrap()">Wrap</a></li>
-  		<li><a href='#filter-tab'>Filter</a></li>
-  		<li><a href='#highlight-tab'>Highlight</a></li>
-  		<li><a href='#exclude-tab'>Exclude</a></li>
+  		<li><a href='#filter-tab' onclick="closeAllTabs()">Filter</a></li>
+  		<li><a href='#highlight-tab' onclick="closeAllTabs()">Highlight</a></li>
+  		<li><a href='#exclude-tab' onclick="closeAllTabs()">Exclude</a></li>
   		<li id='tab-buttons'>
   			<input type='checkbox' id='pause' />
-  			<label for='pause'>&#10074;&#10074; Pause</label>
+  			<label id="pauseBtn" for='pause' onclick="pauseButtonClickHandler()">&#10074;&#10074; Pause</label>
   		</li>
   	</ul>
   	<div id='filter-tab'>
