@@ -54,7 +54,7 @@
 				var regexObj = new RegExp(searchText);
 				return regexObj.test(nodeText);
 			}, function(node, matches) {
-				if (matches) node.css('background-color', 'yellow');
+				if (matches) node.css('background-color', 'rgb(255, 246, 150)');
 			})
 			.asCustomTab($('#exclude-tab'), function(nodeText, searchText) {
 				var regexObj = new RegExp(searchText);

@@ -97,6 +97,26 @@ Client.prototype = {
 				}
 			}
 
+                        node.attr('data-summary-text', node.children('summary').text());
+
+                        var nodeTextHTML = buildLine(node.children('summary').text());
+                        var errorArray = [
+                                'exception',
+                        	'Fatal',
+                        	'fatal',
+                        	'Error',
+                        	'error',
+        			'PDOException',
+                		'STDERR',
+                		'EMPTY'
+		        ];
+			errorArray.forEach(function (errorText) {
+                        	var nodeTextArray = nodeTextHTML.split(errorText);
+                        	nodeTextHTML = nodeTextArray.join('<span class="error_text">' + errorText + '</span>');
+		        });
+                        node.attr('data-summary-text-html', nodeTextHTML);
+			node.children('summary').html(node.attr('data-summary-text-html'));
+
 			node.on('refresh', node.removeAttr.bind(node, 'style'));
 			node.on('refresh', function () {
 				for (var j = 0; j < self.callbacks.length; j++) {
@@ -160,8 +180,50 @@ Client.prototype = {
 
 		this.callbacks.push(function (node) {
 			var fieldValue = field.val();
-			if (fieldValue)
+			if (fieldValue) {
+				var originalNodeText = node.attr('data-summary-text');
+				var originalNodeTextHTML = node.attr('data-summary-text-html');
+			        var blacklistTerms = [
+			        	'span',
+			        	'class',
+			        	'color',
+			        	'torquoise',
+			        	'emerland',
+			        	'peterriver',
+			        	'amethyst',
+			        	'wetasphalt',
+			        	'greensea',
+			        	//'nephritis',
+			        	//'belizehole',
+			        	//'wisteria',
+			        	'midnightblue',
+			        	//'sunflower',
+			        	//'carrot',
+			        	//'alizarin',
+			        	//'clouds',
+			        	//'concrete',
+			        	'orange',
+			        	//'pumpkin',
+			        	'pomegranate',
+			        	//'silver',
+			        	//'abestos',
+			        ];
+			        var validSearchTerm = true;
+			        blacklistTerms.forEach(function (term) {
+					if (-1 < term.indexOf(fieldValue)) {
+						validSearchTerm = false
+                                	}
+			        });
+			        var nodeTextArray = [];
+			        if (validSearchTerm && fieldValue === $('#ui-id-6').val()) { // FILTER MATCH
+					nodeTextArray = originalNodeTextHTML.split(fieldValue);
+		        		node.children('summary').html(nodeTextArray.join('<u>' + fieldValue + '</u>'));
+		        	} else if (validSearchTerm && fieldValue === $('#ui-id-7').val()) { // HIGHTLIGHT MATCH
+		        		nodeTextArray = node.children('summary').html().split(fieldValue);
+					node.children('summary').html(nodeTextArray.join('<b>' + fieldValue + '</b>'));
+		        	}
 				callback(node, filter(node.children('summary').text(), fieldValue));
+			}
 		});
 
 		field.change(this.refresh.bind(this));
