@@ -109,6 +109,7 @@ Client.prototype = {
         			'PDOException',
                 		'STDERR',
                 		'EMPTY',
+				'Undefined',
 				'undefined',
 				'Warning',
 				'warning'

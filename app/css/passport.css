@@ -16,7 +16,7 @@ body {
     user-select: none;
 }
 
-.error_text {
+.alert_text {
     color: #f00;
     font-weight: bold;
 }
