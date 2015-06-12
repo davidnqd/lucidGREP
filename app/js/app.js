@@ -83,8 +83,7 @@ Client.prototype = {
 			var value;
 			for (var key in event) {
 				key = key.toLowerCase();
-				definition.append( $('<dt />', {text: key}) )
-							.append( $('<dd />', {text: JSON.stringify(event[key], undefined, 2) }) );
+				// definition.append( $('<dt />', {text: key}) ).append( $('<dd />', {text: JSON.stringify(event[key], undefined, 2) }) );
 				if (typeof event[key] == 'string' && key[0] != '_') {
 					value = event[key].toLowerCase();
 					node.data(key, value);
@@ -98,6 +97,7 @@ Client.prototype = {
 			}
 
                         node.attr('data-summary-text', node.children('summary').text());
+                        addSyntaxHighlightingToNode(node);
 
                         var nodeTextHTML = buildLine(node.children('summary').text());
                         var errorArray = [
