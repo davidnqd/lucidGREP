@@ -11,6 +11,10 @@ body {
     white-space: nowrap !important;
 }
 
+.results dl {
+    margin: 0.6em 0 0 !important;
+}
+
 #tabs {
     -webkit-user-select: none;
     user-select: none;

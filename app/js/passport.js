@@ -61,3 +61,41 @@ function buildLine(line) {
     return newline.join('');
 }
 
+function highlightSyntax() {
+    SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.all();
+    SyntaxHighlighter.highlight();
+}
+
+var mysqlTerms = [
+    'CREATE',
+    'DROP',
+    'SELECT',
+    'UPDATE',
+    'DELETE',
+    'SHOW',
+    'ALTER',
+    'TRUNCATE'
+];
+
+function addSyntaxHighlightingToNode(node) {
+    var line = node.attr('data-summary-text');
+    var matches = line.match(lineRegex);
+    if (matches && matches.length && matches[14]) {
+        var matchedMysqlTerms = false;
+        mysqlTerms.forEach(function (mysqlTerm) {
+            if (1 === matches[14].indexOf(mysqlTerm)) {
+                matchedMysqlTerms = true;
+            }
+        });
+        if (matchedMysqlTerms === true) { // MYSQL
+            node.find('dl').html('<div><pre class="brush: sql">' + vkbeautify.sql(matches[14].trim()) + '</pre></div>');
+            highlightSyntax();
+        } else if (1 === matches[14].indexOf('[') || 1 === matches[14].indexOf('{')) { // JSON
+            node.find('dl').html('<div><pre class="brush: js">' + JSON.stringify(JSON.parse(matches[14].trim()), null, 4) + '</pre></div>');
+            highlightSyntax();
+        }
+    }
+}
+
