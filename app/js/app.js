@@ -108,11 +108,14 @@ Client.prototype = {
                         	'error',
         			'PDOException',
                 		'STDERR',
-                		'EMPTY'
+                		'EMPTY',
+				'undefined',
+				'Warning',
+				'warning'
 		        ];
 			errorArray.forEach(function (errorText) {
                         	var nodeTextArray = nodeTextHTML.split(errorText);
-                        	nodeTextHTML = nodeTextArray.join('<span class="error_text">' + errorText + '</span>');
+                        	nodeTextHTML = nodeTextArray.join('<span class="alert_text">' + errorText + '</span>');
 		        });
                         node.attr('data-summary-text-html', nodeTextHTML);
 			node.children('summary').html(node.attr('data-summary-text-html'));
@@ -187,6 +190,8 @@ Client.prototype = {
 			        	'span',
 			        	'class',
 			        	'color',
+			        	'alert',
+			        	'text',
 			        	'torquoise',
 			        	'emerland',
 			        	'peterriver',
