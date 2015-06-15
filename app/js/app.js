@@ -221,11 +221,18 @@ Client.prototype = {
                                 	}
 			        });
 			        var nodeTextArray = [];
-			        if (validSearchTerm && fieldValue === $('#ui-id-6').val()) { // FILTER MATCH
+			        if (validSearchTerm && $('#ui-id-6').val() === $('#ui-id-7').val()) { // FILTER & HIGHLIGHT MATCH
+					nodeTextArray = originalNodeTextHTML.split(fieldValue);
+		        		node.children('summary').html(nodeTextArray.join('<u><b>' + fieldValue + '</b></u>'));
+			        } else if (validSearchTerm && fieldValue === $('#ui-id-6').val()) { // FILTER MATCH
 					nodeTextArray = originalNodeTextHTML.split(fieldValue);
 		        		node.children('summary').html(nodeTextArray.join('<u>' + fieldValue + '</u>'));
 		        	} else if (validSearchTerm && fieldValue === $('#ui-id-7').val()) { // HIGHTLIGHT MATCH
-		        		nodeTextArray = node.children('summary').html().split(fieldValue);
+		        		if ($('#ui-id-6').val().trim().length === 0) {
+		        			nodeTextArray = originalNodeTextHTML.split(fieldValue);
+					} else {
+		        			nodeTextArray = node.children('summary').html().split(fieldValue);
+					}
 					node.children('summary').html(nodeTextArray.join('<b>' + fieldValue + '</b>'));
 		        	}
 				callback(node, filter(node.children('summary').text(), fieldValue));
