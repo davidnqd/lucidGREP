@@ -29,16 +29,24 @@ function pauseButtonClickHandler() {
 var lineRegex = /(([\w|\\]*)(->|::|GLOBAL)([\w|\\|\{|\}]*))(\[)(.*)(:)(\d*)(\])(:)((.*)( =>)(.*))?(.*)/;
 
 function buildLine(line) {
-    var newline = [];
+    var newline = [], namespaceArray = [];
     newline.push('<span>');
     var matches = line.match(lineRegex);
     if (matches && matches.length) {
         if (matches[1] === 'GLOBAL' && matches[3] === 'GLOBAL') {
             newline.push('<span class="color_turquoise">GLOBAL</span>');
         } else {
-            newline.push('<span class="color_emerland">', matches[2], '</span>');
+            namespaceArray = matches[2].split('\\');
+            namespaceArray = namespaceArray.map(function (namespace) {
+                return '<span class="color_emerland">' + namespace + '</span>';
+            });
+            newline.push(namespaceArray.join('\\'));
             newline.push('<span>', matches[3], '</span>');
-            newline.push('<span class="color_peterriver">', matches[4], '</span>');
+            namespaceArray = matches[4].split('\\');
+            namespaceArray = namespaceArray.map(function (namespace) {
+                return '<span class="color_peterriver">' + namespace + '</span>';
+            });
+            newline.push(namespaceArray.join('\\'));
         }
         newline.push('<span>', matches[5], '</span>');
         newline.push('<span class="color_orange">', matches[6], '</span>');
