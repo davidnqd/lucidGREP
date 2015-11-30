@@ -26,7 +26,7 @@ function pauseButtonClickHandler() {
     }
 }
 
-var lineRegex = /((\w*)(->|::|GLOBAL)(\w*))(\[)(.*)(:)(\d*)(\])(:)((.*)( =>)(.*))?(.*)/;
+var lineRegex = /(([\w|\\]*)(->|::|GLOBAL)([\w|\\|\{|\}]*))(\[)(.*)(:)(\d*)(\])(:)((.*)( =>)(.*))?(.*)/;
 
 function buildLine(line) {
     var newline = [];
