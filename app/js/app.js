@@ -46,7 +46,17 @@ Client.prototype = {
 	},
 
 	createSummary: function(event, meta) {
-		return $('<summary />', {text: event.data});
+		var data = event.data;
+		var re = / V\d+:/;
+		if (data.match(re)) {
+                	data = data.split(re)[1];
+                	data = data.replace(/ \(log level = \d\)/, '');
+		}
+		var params = {text: data};
+		if (window.nowrap && window.nowrap === true) {
+        		params.class = "nowrap";
+		}
+		return $('<summary />', params);
 	},
 
 	listen: function (emitter) {
@@ -73,8 +83,7 @@ Client.prototype = {
 			var value;
 			for (var key in event) {
 				key = key.toLowerCase();
-				definition.append( $('<dt />', {text: key}) )
-							.append( $('<dd />', {text: JSON.stringify(event[key], undefined, 2) }) );
+				// definition.append( $('<dt />', {text: key}) ).append( $('<dd />', {text: JSON.stringify(event[key], undefined, 2) }) );
 				if (typeof event[key] == 'string' && key[0] != '_') {
 					value = event[key].toLowerCase();
 					node.data(key, value);
@@ -86,6 +95,31 @@ Client.prototype = {
 					self.attributesCache[key][value] = true;
 				}
 			}
+
+                        node.attr('data-summary-text', node.children('summary').text());
+                        addSyntaxHighlightingToNode(node);
+
+                        var nodeTextHTML = buildLine(node.children('summary').text());
+                        var errorArray = [
+                                'exception',
+                        	'Fatal',
+                        	'fatal',
+                        	'Error',
+                        	'error',
+        			'PDOException',
+                		'STDERR',
+                		'EMPTY',
+				'Undefined',
+				'undefined',
+				'Warning',
+				'warning'
+		        ];
+			errorArray.forEach(function (errorText) {
+                        	var nodeTextArray = nodeTextHTML.split(errorText);
+                        	nodeTextHTML = nodeTextArray.join('<span class="alert_text">' + errorText + '</span>');
+		        });
+                        node.attr('data-summary-text-html', nodeTextHTML);
+			node.children('summary').html(node.attr('data-summary-text-html'));
 
 			node.on('refresh', node.removeAttr.bind(node, 'style'));
 			node.on('refresh', function () {
@@ -133,6 +167,76 @@ Client.prototype = {
 			var fieldValue = field.val();
 			if (fieldValue)
 				callback(node, node.children('summary').text().toLowerCase().indexOf(fieldValue.toLowerCase()) !== -1);
+		});
+
+		field.change(this.refresh.bind(this));
+
+		element.append( $('<label />', {label: field.attr('id'), text: 'Message'}).add($('<span/>').append(field)) );
+
+		return this;
+	},
+
+	asCustomTab: function(element, filter, callback) {
+		var tab = {element: element, callback: callback};
+		this.tabs.push(tab);
+
+		var field = $('<input />', {name: 'data'}).uniqueId();
+
+		this.callbacks.push(function (node) {
+			var fieldValue = field.val();
+			if (fieldValue) {
+				var originalNodeText = node.attr('data-summary-text');
+				var originalNodeTextHTML = node.attr('data-summary-text-html');
+			        var blacklistTerms = [
+			        	'span',
+			        	'class',
+			        	'color',
+			        	'alert',
+			        	'text',
+			        	'torquoise',
+			        	'emerland',
+			        	'peterriver',
+			        	'amethyst',
+			        	'wetasphalt',
+			        	'greensea',
+			        	//'nephritis',
+			        	//'belizehole',
+			        	//'wisteria',
+			        	'midnightblue',
+			        	//'sunflower',
+			        	//'carrot',
+			        	//'alizarin',
+			        	//'clouds',
+			        	//'concrete',
+			        	'orange',
+			        	//'pumpkin',
+			        	'pomegranate',
+			        	//'silver',
+			        	//'abestos',
+			        ];
+			        var validSearchTerm = true;
+			        blacklistTerms.forEach(function (term) {
+					if (-1 < term.indexOf(fieldValue)) {
+						validSearchTerm = false
+                                	}
+			        });
+			        var nodeTextArray = [];
+			        if (validSearchTerm && $('#ui-id-6').val() === $('#ui-id-7').val()) { // FILTER & HIGHLIGHT MATCH
+					nodeTextArray = originalNodeTextHTML.split(fieldValue);
+		        		node.children('summary').html(nodeTextArray.join('<u><b>' + fieldValue + '</b></u>'));
+			        } else if (validSearchTerm && fieldValue === $('#ui-id-6').val()) { // FILTER MATCH
+					nodeTextArray = originalNodeTextHTML.split(fieldValue);
+		        		node.children('summary').html(nodeTextArray.join('<u>' + fieldValue + '</u>'));
+		        	} else if (validSearchTerm && fieldValue === $('#ui-id-7').val()) { // HIGHTLIGHT MATCH
+		        		if ($('#ui-id-6').val().trim().length === 0) {
+		        			nodeTextArray = originalNodeTextHTML.split(fieldValue);
+					} else {
+		        			nodeTextArray = node.children('summary').html().split(fieldValue);
+					}
+					node.children('summary').html(nodeTextArray.join('<b>' + fieldValue + '</b>'));
+		        	}
+				callback(node, filter(node.children('summary').text(), fieldValue));
+			}
 		});
 
 		field.change(this.refresh.bind(this));
