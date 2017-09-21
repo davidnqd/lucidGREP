@@ -27,26 +27,19 @@ function pauseButtonClickHandler() {
 }
 
 var lineRegex = /(([\w|\\]*)(->|::|GLOBAL)([\w|\\|\{|\}]*))(\[)(.*)(:)(\d*)(\])(:)((.*)( =>)(.*))?(.*)/;
+var simpleLineRegex = /(.*:) (\[(\w*)\]) (.*)( => )(.*)/;
 
 function buildLine(line) {
-    var newline = [], namespaceArray = [];
+    var newline = [];
     newline.push('<span>');
     var matches = line.match(lineRegex);
     if (matches && matches.length) {
         if (matches[1] === 'GLOBAL' && matches[3] === 'GLOBAL') {
             newline.push('<span class="color_turquoise">GLOBAL</span>');
         } else {
-            namespaceArray = matches[2].split('\\');
-            namespaceArray = namespaceArray.map(function (namespace) {
-                return '<span class="color_emerland">' + namespace + '</span>';
-            });
-            newline.push(namespaceArray.join('\\'));
+            newline.push('<span class="color_emerland">', matches[2], '</span>');
             newline.push('<span>', matches[3], '</span>');
-            namespaceArray = matches[4].split('\\');
-            namespaceArray = namespaceArray.map(function (namespace) {
-                return '<span class="color_peterriver">' + namespace + '</span>';
-            });
-            newline.push(namespaceArray.join('\\'));
+            newline.push('<span class="color_peterriver">', matches[4], '</span>');
         }
         newline.push('<span>', matches[5], '</span>');
         newline.push('<span class="color_orange">', matches[6], '</span>');
@@ -63,7 +56,15 @@ function buildLine(line) {
             newline.push('<span class="color_greensea">', matches[14], '</span>');
         }
     } else {
-        newline.push(line);
+        var simpleMatches = line.match(/(.*:) (\[(\w*)\])(.*)( => )(.*)/);
+        if (simpleMatches && simpleMatches.length) {
+            newline.push('<span class="color_emerland">', simpleMatches[2], '</span>');
+            newline.push('<span>', simpleMatches[4], '</span>');
+            newline.push('<span class="color_peterriver">', simpleMatches[5], '</span>');
+            newline.push('<span class="color_pomegranate">', simpleMatches[6], '</span>');
+        } else {
+            newline.push(line);
+        }
     }
     newline.push('</span>');
     return newline.join('');
@@ -89,21 +90,28 @@ var mysqlTerms = [
 
 function addSyntaxHighlightingToNode(node) {
     var line = node.attr('data-summary-text');
+    var match = '';
     var matches = line.match(lineRegex);
+    var simpleMatches = line.match(/(.*:) (\[(\w*)\])(.*)( => )(.*)/);
+    console.log(simpleMatches);
     if (matches && matches.length && matches[14]) {
+        match = matches[14];
+    } else if (simpleMatches && simpleMatches.length && simpleMatches[6]) {
+        match = simpleMatches[6];
+    }
+    if (match !== '') {
         var matchedMysqlTerms = false;
         mysqlTerms.forEach(function (mysqlTerm) {
-            if (1 === matches[14].indexOf(mysqlTerm)) {
+            if (1 === match.indexOf(mysqlTerm)) {
                 matchedMysqlTerms = true;
             }
         });
         if (matchedMysqlTerms === true) { // MYSQL
-            node.find('dl').html('<div><pre class="brush: sql">' + vkbeautify.sql(matches[14].trim()) + '</pre></div>');
+            node.find('dl').html('<div><pre class="brush: sql">' + vkbeautify.sql(match.trim()) + '</pre></div>');
             highlightSyntax();
-        } else if (1 === matches[14].indexOf('[') || 1 === matches[14].indexOf('{')) { // JSON
-            node.find('dl').html('<div><pre class="brush: js">' + JSON.stringify(JSON.parse(matches[14].trim()), null, 4) + '</pre></div>');
+        } else if (1 === match.indexOf('[') || 1 === match.indexOf('{')) { // JSON
+            node.find('dl').html('<div><pre class="brush: js">' + JSON.stringify(JSON.parse(match.trim()), null, 4) + '</pre></div>');
             highlightSyntax();
         }
     }
 }
-
